@@ -11,6 +11,11 @@ function getCart($user_id, $pdo){
   return $result;
 }
 
+if(isset($_SESSION['email'])){
+  $_SESSION['error_message'] = "You are already logged";
+  header("Location: index.php");
+}
+
 if (count($_POST) > 0) {
   if (isValid($_POST['email'], $_POST['password'], $pdo)) {
     $_SESSION['email'] = $_POST['email'];

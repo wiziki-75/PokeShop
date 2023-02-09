@@ -48,7 +48,7 @@ function getCart($user_id, $pdo){
     $stmt->execute();
     $result = $stmt->FetchAll(PDO::FETCH_ASSOC);
     return $result;
-  }
+}
 
 function addCart($user_id, $product_id, $pdo){
     $sql = "INSERT INTO cart (user_id, product_id) VALUES (:user_id,:product_id)";
@@ -58,10 +58,19 @@ function addCart($user_id, $product_id, $pdo){
     return $result;
 }
 
-function deleteProduct($product_id, $pdo){
+function deleteProduct($product_id, $file, $pdo){
+    unlink($file);
     $sql = "DELETE FROM products WHERE product_id = :product_id";
     $stmt = $pdo->prepare($sql);
     $params = ['product_id' => $product_id];
+    $result = $stmt->execute($params);
+    return $result;
+}
+
+function deleteItemInCart($user_id, $product_id, $pdo){
+    $sql = "DELETE FROM cart WHERE product_id = :product_id AND user_id = :user_id";
+    $stmt = $pdo->prepare($sql);
+    $params = ['product_id' => $product_id, 'user_id' => $user_id];
     $result = $stmt->execute($params);
     return $result;
 }

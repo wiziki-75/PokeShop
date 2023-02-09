@@ -32,7 +32,9 @@ if(isset($_SESSION['email'])){
 }
 
 if(isset($_GET['delete'])){
-    deleteProduct($_GET['delete'], $pdo);
+    deleteProduct($_GET['delete'], $_GET['file'], $pdo);
+    deleteItemInCart($_SESSION['id'], $_GET['delete'], $pdo);
+    $_SESSION['cart'] = count(getCart($_SESSION['id'], $pdo));
     header("Refresh:0; url=index.php?deleted=1" );
 }
 
@@ -56,7 +58,7 @@ if(isset($_GET['delete'])){
     <body>
         <!-- Section-->
         <section class="py-5">
-            <form action="index.php" method="POST">
+            <form action="index.php" method="POST" class="d-flex justify-content-center">
                 <select name="sort" id="f">
                     <option value="">Choose option</option>
                     <option value="1">By name A - Z</option>
@@ -65,14 +67,14 @@ if(isset($_GET['delete'])){
                     <option value="4">By price DESC</option>
                 </select>
                 <button type="submit" class="btn btn-primary">Sort</button>
-            </form>
-            <form action="index.php" method="post">
+            </form><br>
+            <form action="index.php" method="post" class="d-flex justify-content-center">
                 <label for="search">By name</label>
                 <input type="text" name="search">
                 <button type="submit" class="btn btn-primary">Search</button>
             </form><br>
 
-            <a class="nav-link" href="index.php?refresh=1">Reset</a>
+            <a class="nav-link d-flex justify-content-center" href="index.php?refresh=1">Reset</a>
 
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
@@ -95,7 +97,6 @@ if(isset($_GET['delete'])){
                                     <h5 class="fw-bolder"><a href="detail.php?id=<?= $products[$i]['product_id'] ?>"><?= $products[$i]['product_name'] ?></a></h5>
                                     <!-- Product price-->
                                     <?= $products[$i]['product_price'] ?>€<br>
-                                    <?= $products[$i ]['date'] ?>
                                 </div>
                             </div>
                             <!-- Product actions-->
@@ -106,11 +107,11 @@ if(isset($_GET['delete'])){
                                         if(isset($_SESSION['id'])){ echo $_SESSION['id'] ?>&product_id=<?php echo $products[$i]['product_id']; }?>">
                                         Add to cart
                                     </a>
-                                    <?php if(isset($_SESSION['admin'])) { ?>
-                                    <a class="btn btn-outline-dark mt-auto" href="index.php?delete=<?= $products[$i]['product_id'] ?>">
+                                    <?php if(isset($_SESSION['email'])) { if($_SESSION['email'] == "admin@gmail.com"){?>
+                                    <a class="btn btn-outline-dark mt-auto" href="index.php?delete=<?= $products[$i]['product_id'] ?>&file=<?= $products[$i]['product_img'] ?>">
                                         Delete
                                     </a>
-                                    <?php } ?>
+                                    <?php }} ?>
                                 </div>
                             </div>
                         </div>
